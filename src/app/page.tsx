@@ -1,5 +1,7 @@
 import EstimateForm from "@/components/feature/home/estimate-form";
 import Timer from "@/components/feature/home/timer";
+import { Button } from "@/components/ui/button";
+import TranslateExample from "@/components/feature/home/translate-example";
 
 export default function Home() {
   return (
@@ -37,10 +39,13 @@ export default function Home() {
           </p>
         </div>
       </section>
+      <section className="bg-primary-foreground px-4 py-8 mt-16">
+        <TranslateExample />
+      </section>
       <section className="p-4">
         <div className="flex flex-col text-center mt-16">
           <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
-            믿고 맡기세요
+            믿고 맡겨주세요
           </h3>
           <div className="flex flex-col md:flex-row justify-center gap-4 mt-4">
             <div className="text-xl bg-primary text-primary-foreground hover:bg-primary/90 p-8 rounded">
