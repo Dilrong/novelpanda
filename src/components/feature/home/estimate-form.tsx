@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import * as z from "zod";
@@ -22,6 +22,7 @@ function EstimateForm() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isEstimate, setIsEstimate] = useState<boolean>(false);
   const [price, setPrice] = useState<number>(0);
+  const [displayedPrice, setDisplayedPrice] = useState<number>(0);
 
   const formSchema = z.object({
     content: z.string().min(100, {
@@ -60,12 +61,39 @@ function EstimateForm() {
         }* \n• 신청언어: *${
           values.lang
         }* \n• 견적비용: *${price.toLocaleString()}* 원 
-        \`\`\`${values.content}\`\`\``,
+        \n• 요청소설:
+        ${values.content}`,
       );
     }
 
     setIsLoading(false);
   };
+
+  useEffect(() => {
+    let animationFrameId: number;
+    const startPrice = 0;
+    const endPrice = price;
+    const animationDuration = 1000; // 애니메이션 지속 시간 (밀리초)
+
+    const startTime = performance.now();
+
+    const updatePrice = (currentTime: number) => {
+      const elapsedTime = currentTime - startTime;
+      const progress = Math.min(elapsedTime / animationDuration, 1);
+      const animatedPrice = Math.floor(
+        progress * (endPrice - startPrice) + startPrice,
+      );
+      setDisplayedPrice(animatedPrice);
+
+      if (progress < 1) {
+        animationFrameId = requestAnimationFrame(updatePrice);
+      }
+    };
+
+    animationFrameId = requestAnimationFrame(updatePrice);
+
+    return () => cancelAnimationFrame(animationFrameId);
+  }, [price]);
 
   return (
     <Form {...form}>
@@ -85,7 +113,7 @@ function EstimateForm() {
                   {!isEstimate && (
                     <Button type="submit" disabled={isLoading}>
                       {isLoading && (
-                        <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+                        <Icons.spinner className="mr-4 h-4 w-4 animate-spin" />
                       )}
                       견적내기
                     </Button>
@@ -97,14 +125,14 @@ function EstimateForm() {
           )}
         />
         {isEstimate && (
-          <div className="flex flex-col text-center mt-4">
+          <div className="flex flex-col text-center mt-8">
             <p className="scroll-m-20 text-2xl font-semibold tracking-tight">
-              번역 비용은 약 <b>{price.toLocaleString()}</b> 원 입니다.
+              번역 비용은 약 <b>{displayedPrice.toLocaleString()}</b> 원 입니다.
             </p>
             <p className="text-xs text-muted-foreground mt-1">
               * 실제 비용은 견적과 상이할 수 있습니다.
             </p>
-            <div className="mt-4 flex flex-col gap-2">
+            <div className="mt-8 flex flex-col gap-4">
               <FormField
                 control={form.control}
                 name="email"
@@ -137,16 +165,16 @@ function EstimateForm() {
                 )}
               />
             </div>
-            <div className="flex justify-center mt-2 gap-2">
+            <div className="flex justify-center mt-6 gap-4">
               <Button type="submit" disabled={isLoading}>
                 {isLoading && (
-                  <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+                  <Icons.spinner className="mr-4 h-4 w-4 animate-spin" />
                 )}
                 의뢰하기
               </Button>
               <Button type="submit" disabled={isLoading} variant="outline">
                 {isLoading && (
-                  <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+                  <Icons.spinner className="mr-4 h-4 w-4 animate-spin" />
                 )}
                 견적내기
               </Button>
